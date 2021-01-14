@@ -26,8 +26,8 @@ function startQuestion() {
                 type: "list",
                 message: "What would you like to do?",
                 choices: [
-                    "View Employee",
-                    "View Department",
+                    "View Employees",
+                    "View Departments",
                     "View Roles",
                     "Add Department",
                     "Add Roles",
@@ -42,8 +42,12 @@ function startQuestion() {
                     viewEmployee();
                     break;
                 case "View Department":
-                    viewDeparment();
+                    viewDepartment();
                     break;
+                case "Add Department":
+                    addDepartment();
+                    break;
+                    //NEED TO ADD ALL OF THE OPTIONS
                 default :
                     connection.end();
                     process.exit(0);
@@ -58,4 +62,24 @@ function viewEmployee() {
         console.table(response)
         startQuestion();
     })
+}
+
+function addDepartment() {
+   inquirer
+   .prompt([
+       {
+           name: "new_department",
+           type: "input",
+           message: "What is the name of the department you would like to add?"
+       }
+   ])
+   .then(function(response) {
+     var query = "INSERT INTO department (name) values (?)";
+     connection.query (query, response.new_department, function(err, response) {
+        if (err) throw err;
+        console.table(response)
+        startQuestion();
+    })
+   })
+
 }
