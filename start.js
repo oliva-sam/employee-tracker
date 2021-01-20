@@ -21,7 +21,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    departmentIDs = currentDepartments();
+   // departmentIDs = currentDepartments();
     startQuestion();
 });
 
@@ -61,7 +61,7 @@ function startQuestion() {
                     addDepartment();
                     break;
                 case "Add Role":
-                    addRole(departmentIDs);
+                    addRole();
                     break;
                 case "Add Employee":
                     addEmployee();
@@ -123,8 +123,7 @@ function addDepartment() {
 
 }
 
-function addRole(departmentIDs) {
-    console.log(departmentIDs)
+function addRole() {
     inquirer
         .prompt([
             {
@@ -145,11 +144,12 @@ function addRole(departmentIDs) {
             }
         ])
         .then(function (response) {
-            var query = "INSERT INTO role (title, salary, department_id) values (?, ?, ?)";
-            connection.query(query, response.new_role, response.new_role_salary, function (err, data) {
+            var query = "INSERT INTO role (title, salary, department_id) values (?)";
+            connection.query(query, response.new_role, response.new_role_salary, response.new_role_department_id, function (err, data) {
                 if (err) throw err;
                 console.table(data)
                 startQuestion();
+                //THIS IS WHERE I STOPPED
             })
         })
 
