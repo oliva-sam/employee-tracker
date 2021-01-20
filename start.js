@@ -2,7 +2,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 require("console.table");
-//const util = require("util");
 
 // Setting up mySQL connection
 var connection = mysql.createConnection({
@@ -17,15 +16,13 @@ var connection = mysql.createConnection({
     database: "employeeTrackerDB"
 });
 
-//let departmentIDs = []
 
 connection.connect(function (err) {
     if (err) throw err;
-   // departmentIDs = currentDepartments();
     startQuestion();
 });
 
-//connection.query = util.promisify(connection.query);
+
 
 function startQuestion() {
     inquirer
@@ -67,7 +64,7 @@ function startQuestion() {
                     addEmployee();
                     break;
                 case "Update Employee Role":
-                    addDepartment();
+                    updateRole();
                     break;
                 default:
                     connection.end();
@@ -140,23 +137,103 @@ function addRole() {
                 name: "new_role_department_id",
                 type: "input",
                 message: "What is the department id for this new role?",
-                // choices: currentDepartments()
+
             }
         ])
         .then(function (response) {
-            var query = "INSERT INTO role (title, salary, department_id) values (?)";
-            connection.query(query, response.new_role, response.new_role_salary, response.new_role_department_id, function (err, data) {
+            var query = "INSERT INTO role (title, salary, department_id) values (?,?,?)";
+            connection.query(query, [response.new_role, response.new_role_salary, response.new_role_department_id], function (err, data) {
+                if (err) throw err;
+                console.log("New Role has been added");
+            })
+            var query = "SELECT * FROM role;";
+            connection.query(query, function (err, data) {
                 if (err) throw err;
                 console.table(data)
                 startQuestion();
-                //THIS IS WHERE I STOPPED
             })
         })
 
 }
 
 
-// function currentDepartments() {
-//     var query = "SELECT (id) FROM department";
-//     return connection.query(query);
-// }
+function addEmployee() {
+    inquirer
+        .prompt([
+            {
+                name: "new_employee_first",
+                type: "input",
+                message: "What is the first name of the employee you would like to add?"
+            },
+            {
+                name: "new_employee_last",
+                type: "input",
+                message: "What is the last name of the employee you would like to add?"
+            },
+            {
+                name: "new_employee_role_id",
+                type: "input",
+                message: "What is the role id for this new employee?",
+
+            },
+            {
+                name: "new_employee_manager_id",
+                type: "input",
+                message: "What is the manager id for this new employee?",
+
+            }
+        ])
+        .then(function (response) {
+            var query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) values (?,?,?,?)";
+            connection.query(query, 
+                [response.new_employee_first, response.new_employee_last, response.new_employee_role_id, response.new_employee_manager_id],
+                function (err, data) {
+                if (err) throw err;
+                console.log("New Employee has been added");
+            })
+            var query = "SELECT * FROM employee;";
+            connection.query(query, function (err, data) {
+                if (err) throw err;
+                console.table(data)
+                startQuestion();
+            })
+        })
+
+}
+
+function updateRole() {
+    inquirer
+    .prompt ([
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the first name of the employee?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the last name of the employee?"
+        },
+        {
+            name: "updatedRole",
+            type: "input",
+            message: "What is the new role ID of the employee?"
+        }
+    ])
+    .then(function (response) {
+        var query = "UPDATE employee SET role_id=? WHERE first_name=? AND last_name=?";
+        connection.query(query, 
+            [response.updatedRole, response.firstName, response.lastName], function (err, data) {
+            if (err) throw err;
+            console.log("Employee has been updated");
+        })
+        var query = "SELECT * FROM employee;";
+        connection.query(query, function (err, data) {
+            if (err) throw err;
+            console.table(data)
+            startQuestion();
+        })
+    })
+}
+
+
