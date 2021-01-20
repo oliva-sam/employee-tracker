@@ -113,6 +113,11 @@ function addDepartment() {
             var query = "INSERT INTO department (name) values (?)";
             connection.query(query, response.new_department, function (err, data) {
                 if (err) throw err;
+                console.log("New Department has been added");
+            })
+            var query = "SELECT * FROM department;";
+            connection.query(query, function (err, data) {
+                if (err) throw err;
                 console.table(data)
                 startQuestion();
             })
@@ -185,12 +190,12 @@ function addEmployee() {
         ])
         .then(function (response) {
             var query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) values (?,?,?,?)";
-            connection.query(query, 
+            connection.query(query,
                 [response.new_employee_first, response.new_employee_last, response.new_employee_role_id, response.new_employee_manager_id],
                 function (err, data) {
-                if (err) throw err;
-                console.log("New Employee has been added");
-            })
+                    if (err) throw err;
+                    console.log("New Employee has been added");
+                })
             var query = "SELECT * FROM employee;";
             connection.query(query, function (err, data) {
                 if (err) throw err;
@@ -203,37 +208,37 @@ function addEmployee() {
 
 function updateRole() {
     inquirer
-    .prompt ([
-        {
-            name: "firstName",
-            type: "input",
-            message: "What is the first name of the employee?"
-        },
-        {
-            name: "lastName",
-            type: "input",
-            message: "What is the last name of the employee?"
-        },
-        {
-            name: "updatedRole",
-            type: "input",
-            message: "What is the new role ID of the employee?"
-        }
-    ])
-    .then(function (response) {
-        var query = "UPDATE employee SET role_id=? WHERE first_name=? AND last_name=?";
-        connection.query(query, 
-            [response.updatedRole, response.firstName, response.lastName], function (err, data) {
-            if (err) throw err;
-            console.log("Employee has been updated");
+        .prompt([
+            {
+                name: "firstName",
+                type: "input",
+                message: "What is the first name of the employee?"
+            },
+            {
+                name: "lastName",
+                type: "input",
+                message: "What is the last name of the employee?"
+            },
+            {
+                name: "updatedRole",
+                type: "input",
+                message: "What is the new role ID of the employee?"
+            }
+        ])
+        .then(function (response) {
+            var query = "UPDATE employee SET role_id=? WHERE first_name=? AND last_name=?";
+            connection.query(query,
+                [response.updatedRole, response.firstName, response.lastName], function (err, data) {
+                    if (err) throw err;
+                    console.log("Employee has been updated");
+                })
+            var query = "SELECT * FROM employee;";
+            connection.query(query, function (err, data) {
+                if (err) throw err;
+                console.table(data)
+                startQuestion();
+            })
         })
-        var query = "SELECT * FROM employee;";
-        connection.query(query, function (err, data) {
-            if (err) throw err;
-            console.table(data)
-            startQuestion();
-        })
-    })
 }
 
 
